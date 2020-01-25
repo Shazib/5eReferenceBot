@@ -1,0 +1,29 @@
+{
+  "name": "telegram-dnd5e-bot",
+  "version": "1.0.0",
+  "description": "dnd5e reference bot for telegram",
+  "main": "bot.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "telegraf": "^3.36.0",
+    "utf8": "^3.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shazib/5eReferenceBot.git"
+  },
+  "keywords": [
+    "dnd5e",
+    "telegram"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shazib/5eReferenceBot/issues"
+  },
+  "homepage": "https://github.com/Shazib/5eReferenceBot#readme"
+}
