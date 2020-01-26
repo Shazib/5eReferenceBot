@@ -2,10 +2,14 @@ const Telegraf = require('telegraf');
 const axios = require("axios");
 const utf8 = require("utf8");
 
-const bot = new Telegraf('api-token');
+const bot = new Telegraf('apitoken');
 
 const Extra = require('telegraf/extra')
 const Markup = require('telegraf/markup')
+
+// For searching custom mediawiki instance 
+
+const WIKI_API_PATH = 'wiki-api-url';
 
 bot.use((ctx, next) => {
     const start = new Date()
@@ -17,8 +21,26 @@ bot.use((ctx, next) => {
 function apisearch(apiurl) {
     return axios.get(apiurl)
 }
-function apigetitem(apiurl) {
-    return axios.get(apiurl)
+
+function replyWiki(ctx) {
+
+    var search = ctx.message.text;
+
+    search = search.replace(/\/wiki /g, "");
+
+    var fullUrl = `${WIKI_API_PATH}?action=opensearch&search=${search}&format=json`;
+
+    console.log(fullUrl);
+
+    apisearch(fullUrl).then(function (response) {
+        var msg = composeMessageWiki(response.data);
+
+        console.log(`MESSAGE: ${msg}`);
+
+        var url = `<meta property="og:url" content="${msg}" />`
+
+        ctx.replyWithHTML(msg, Extra.webPreview(true));
+    });
 }
 
 function replySpell(ctx) {
@@ -101,7 +123,7 @@ function composeMessageSpell(spell) {
     hl = hl + "".replace(/â€�/g, "\"");
     hl = hl + "".replace(/â€œ/g, "\"");
 
-    msg = `***${spell.name}*** R:${spell.range} ${spell.components}
+    var msg = `***${spell.name}*** R:${spell.range} ${spell.components}
 ${spell.duration}/${spell.casting_time}, Level ${spell.level} Spell
 ${spelldesc}
 ${hl}`
@@ -109,10 +131,28 @@ ${hl}`
     return msg
 }
 
+function composeMessageWiki(wiki) {
+
+    console.log('Wiki Results: ');
+    console.log(wiki);
+
+    var url = wiki[3][0];
+
+    console.log(`url ${url}`);
+
+    if (url != null && url != '') {
+        return url;
+    }
+
+    return 'Not Found';
+}
+
 bot.start((ctx) => ctx.reply('Hey there!'))
 
 bot.command('spell', (ctx) => replySpell(ctx))
 bot.command('monster', (ctx) => replyMonster(ctx))
+bot.command('wiki', (ctx) => replyWiki(ctx))
+
 // bot.action('delete', ({ deleteMessage }) => deleteMessage())
 
 /* AWS Lambda handler function */
